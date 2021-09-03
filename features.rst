@@ -3,8 +3,8 @@ Additional features of the Linkam class
 =======================================
 
 Because the ``status_code`` is such a obscure way of presenting status
-information, I made a small display showing the most important
-features of the controller.
+information, I made a small display showing the most salient features
+of the controller.
 
 .. code-block:: python
 
@@ -87,4 +87,17 @@ suited for use in a proper bluesky experimental plan.
       def off_plan(self):
           return(yield from mv(self.startheat, 0))
 
+At the bsui command line:
 
+.. code-block:: python
+
+   linkam.on()
+   linkam.off()
+
+
+In an experimental plan:
+
+.. code-block:: python
+
+   yield from linkam.on_plan()
+   yield from linkam.off_plan()

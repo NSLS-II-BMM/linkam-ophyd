@@ -4,9 +4,18 @@ Code Listing
 
 Here is the full listing of the Linkam class code.
 
+An up-to-date version `can be found here
+<https://github.com/NSLS-II-BMM/profile_collection/blob/master/startup/BMM/linkam.py>`__
+at BMM's GitHub site.
+
+
 Note that ``boxedtext`` is a tool used in BMM's profile for displaying
-textual information on screen.  See
-https://github.com/NSLS-II-BMM/profile_collection/blob/master/startup/BMM/functions.py#L144
+textual information on screen.  See `the definition of boxedtext
+<https://github.com/NSLS-II-BMM/profile_collection/blob/master/startup/BMM/functions.py#L144>`__.
+``error_msg`` and ``go_msg`` are from a tool BMM uses to color text
+written to the screen.  They make text red and green, respectively.
+All of that is sugar coating and can easily be excised from the
+``status()`` method.
 
 .. code-block:: python
    :linenos:
@@ -14,7 +23,8 @@ https://github.com/NSLS-II-BMM/profile_collection/blob/master/startup/BMM/functi
         from ophyd import Component as Cpt, EpicsSignal, EpicsSignalRO, PVPositioner
         from ophyd.signal import DerivedSignal
         
-        from BMM.functions      import boxedtext
+        from BMM.functions import boxedtext
+	from BMM.functions import error_msg, go_msg
         
         class AtSetpoint(DerivedSignal):
             '''A signal that does bit-wise arithmetic on the Linkam's status code'''

@@ -70,13 +70,17 @@ then interpret it in a bit-wise context.
  16     LN2 pump is in auto mode
 =====  ============================
 
-So, if
+Suppose this is a pythonically True statement:
 
 .. code-block:: python
 
    linkam.status_code.get() & 2 == 2
 
-Then the temperature is at its set point.
+This means that the temperature is at its set point.  So, if
+``linkam.status_code`` is 6.0, then the 2-bit is set and the
+temperature is at its set point.  As the temperature is ramping up,
+``linkam.status_code`` would be 4.0.  The 2-bit is unset, indicating
+that he temperature is not at the set point.
 
 Here is how we encode this in Ophyd.  We need to create a
 DerivedSignal which is used to extract the 2 bit from the
@@ -134,6 +138,32 @@ and see something like this at the bsui terminal:
    :align: center
 
    A bluesky progress bar as the Linkam stage heats up
+
+
+To use this:
+
+.. code-block:: python
+
+   linkam = Linkam('XF:06BM-ES:{LINKAM}:', name='linkam', egu='°C', settle_time=10, limits=(-169.0,500.0))
+
+The ``egu`` string (i.e., engineering units) is used in the progress
+bar that is displayed during a move.
+
+The ``settle_time`` is configurable on-the-fly:
+
+.. code-block:: python
+
+   linkam.settle_time = 120
+
+This sets an amount of time to pause upon seeing the temperature reach
+the set point to allow the sample to equilibrate at the new
+temperature.  The ``mv()`` command will not return until after the
+settling time has elapsed.  The units are seconds.
+
+The ``limits`` define the bounds of temperature, like soft limits for
+a motor.  The units are degrees C.
+
+
 
 
 The final version of the ophyd class `can be found here

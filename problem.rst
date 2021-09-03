@@ -2,13 +2,15 @@
 Linkam Stage
 ============
 
-At BMM, we have a Linkam heating stage, Model THS600.  This is the
-device with a heater that goes up to 500C plus a liquid nitrogen
-cooling circuit to cool samples down to nearly 77K.  This model comes
-with the T96 controller for which Jakub Wlodek recently wrote an IOC.  
+At BMM, we have a Linkam heating stage, `Model THMS600
+<https://www.linkam.co.uk/thms600>`__.  This is the device with a
+heater that goes up to 500C plus a liquid nitrogen cooling circuit to
+cool samples down to nearly 77K.  This model comes with the T96
+controller for which Jakub Wlodek recently wrote an IOC.
 
 Our controller box has an RS-232 card in one of the back slots.  We
-communicate to this via a Moxa terminal server.
+communicate to this via a Moxa terminal server with the IOC running on
+one of the beamline's IOC servers..
 
 Jakub also provided us with a CSS screen as an interface to the
 Linkam.  Here's what that looks like.
@@ -21,10 +23,10 @@ Linkam.  Here's what that looks like.
    The CSS screen for the Linkam T96.
 
 
-The plan at BMM for using this stage is to incorporate it into our
-system for beamline automation.  In short, the user will fill out a
-spreadsheet describing the sequence of the experiment.  At a sequence
-of temperatures:
+The plan at BMM is to incorporate this stage into our system for
+beamline automation.  In short, the user will fill out a spreadsheet
+describing the sequence of the experiment.  At a sequence of
+temperatures:
 
 #. Move the stage to the indicated temperature
 #. Measure XAFS at that temperature
@@ -33,8 +35,9 @@ of temperatures:
 
 To make this happen, we need an Ophyd object.
 
-Jakub has a handy tool that generates bare-bones list of Ophyd object
-components from the PVs served by an IOC.  Here's what he provided:
+Jakub has a handy tool that generates a bare-bones list of Ophyd
+object components from the PVs served by an IOC.  Here's what he
+provided:
 
 .. code-block:: python
    :linenos:
@@ -70,7 +73,7 @@ That's obviously a good start.  You see PVs for things like
 temperature readback at line 12, set point at lines 21 and 22, power
 output at line 23 ... useful stuff.
 
-Making a bare bones Ophyd object is dead simple.  This works and
+Making a bare bones Ophyd object is dead simple.  This functions and
 involves little more that wrapping the component list in a bit of
 boilerplate.
 
@@ -112,7 +115,7 @@ boilerplate.
 
      linkam = Linkam('XF:06BM-ES:{LINKAM}:', name='linkam')
 
-This work. You can set a setpoint with
+This works. You can set a set point with
 
 .. code-block:: python
 
@@ -126,13 +129,13 @@ and read the temperature with
 
 
 There are, however, a number of shortcomings with this overly simple
-Ophyd object.
+approach.
 
 #. The signal that the stage has *reached* its temperature setpoint is
    buried in the bit sequence reported by the ``status`` attribute.
 #. Putting a temperature change in a bluesky plan is difficult with
-   this object because you need a way to block plan execution until
-   the temperature is at the set point.
+   this object because it does not provide a way to block plan
+   execution until the temperature is at the set point.
 #. In this form, you cannot use the bluesky stub plan ``mv()`` because
    there is no way to signal that the temperature change is done.
 #. The attributes ``model``, ``serial``, and so on report information
